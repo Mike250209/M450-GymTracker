@@ -1,0 +1,38 @@
+### Alle Mitglieder
+GET http://localhost:8080/members
+
+### Alle Übungen
+GET http://localhost:8080/exercises
+
+### Workouts von Mitglied 1
+GET http://localhost:8080/members/1/workouts
+
+### Gesamtvolumen von Mitglied 1
+GET http://localhost:8080/members/1/volume
+
+### Neues Workout starten
+POST http://localhost:8080/workouts
+Content-Type: application/json
+
+{ "memberId": 1, "date": "2026-11-03" }
+
+### Satz hinzufügen (Workout-ID aus der Antwort oben)
+POST http://localhost:8080/workouts/4/sets
+Content-Type: application/json
+
+{ "exerciseId": 1, "reps": 8, "weight": 70 }
+
+### Ungültiger Satz -> 400
+POST http://localhost:8080/workouts/4/sets
+Content-Type: application/json
+
+{ "exerciseId": 1, "reps": 0, "weight": 70 }
+
+### Workout löschen
+DELETE http://localhost:8080/workouts/4
+
+### 1-Rep-Max berechnen
+GET http://localhost:8080/calculator/one-rep-max?reps=8&weight=60
+
+### Stärke-Einstufung
+GET http://localhost:8080/calculator/strength-level?oneRepMax=90&bodyWeight=75

@@ -1,0 +1,30 @@
+name: Tests & Mutation-Testing
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+          cache: maven
+
+      - name: Unit-Tests
+        run: mvn -B test
+
+      - name: Mutation-Testing (PIT)
+        run: mvn -B test-compile org.pitest:pitest-maven:mutationCoverage
+
+      - name: PIT-Report hochladen
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: pit-report
+          path: target/pit-reports
