@@ -42,7 +42,7 @@ public class TrainingCalculator {
 
     /** Trainingsvolumen = Summe aus Wiederholungen × Gewicht aller Sätze. */
     public double volume(List<WorkoutSet> sets) {
-        if (sets == null || sets.isEmpty()) {
+        if (sets == null) {
             return 0;
         }
         double total = 0;
