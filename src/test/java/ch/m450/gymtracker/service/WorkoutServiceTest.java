@@ -216,6 +216,42 @@ class WorkoutServiceTest {
     }
 
     @Nested
+    @DisplayName("averageVolumePerWorkout (TDD – statistischer Wert aus DB-Daten)")
+    class AverageVolumePerWorkout {
+
+        @Test
+        @DisplayName("berechnet das durchschnittliche Volumen pro Workout und rundet auf 2 Stellen")
+        void computesRoundedAverage() {
+            Workout w1 = new Workout(member, LocalDate.now());
+            Workout w2 = new Workout(member, LocalDate.now());
+            Workout w3 = new Workout(member, LocalDate.now());
+            when(workoutRepository.findByMemberId(1L)).thenReturn(List.of(w1, w2, w3));
+            when(calculator.volume(any())).thenReturn(40.0, 30.0, 30.0);
+
+            assertThat(service.averageVolumePerWorkout(1L)).isEqualTo(33.33);
+        }
+
+        @Test
+        @DisplayName("berechnet einen exakten Durchschnitt über zwei Workouts")
+        void computesExactAverage() {
+            Workout w1 = new Workout(member, LocalDate.now());
+            Workout w2 = new Workout(member, LocalDate.now());
+            when(workoutRepository.findByMemberId(1L)).thenReturn(List.of(w1, w2));
+            when(calculator.volume(any())).thenReturn(300.0, 150.0);
+
+            assertThat(service.averageVolumePerWorkout(1L)).isEqualTo(225.0);
+        }
+
+        @Test
+        @DisplayName("gibt 0 zurück, wenn das Mitglied keine Workouts hat")
+        void returnsZeroWithoutWorkouts() {
+            when(workoutRepository.findByMemberId(1L)).thenReturn(List.of());
+
+            assertThat(service.averageVolumePerWorkout(1L)).isZero();
+        }
+    }
+
+    @Nested
     @DisplayName("deleteWorkout")
     class DeleteWorkout {
 

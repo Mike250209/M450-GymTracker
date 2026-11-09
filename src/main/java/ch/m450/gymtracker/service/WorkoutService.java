@@ -9,6 +9,8 @@ import ch.m450.gymtracker.repository.MemberRepository;
 import ch.m450.gymtracker.repository.WorkoutRepository;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -67,6 +69,25 @@ public class WorkoutService {
             total += calculator.volume(workout.getSets());
         }
         return total;
+    }
+
+    /**
+     * Durchschnittliches Trainingsvolumen pro Workout eines Mitglieds.
+     * Statistischer Wert, berechnet aus den Workout-Daten der Datenbank.
+     * → Baustein 4: TDD (Red → Green → Refactor)
+     */
+    public double averageVolumePerWorkout(Long memberId) {
+        List<Workout> workouts = workoutRepository.findByMemberId(memberId);
+        if (workouts.isEmpty()) {
+            return 0;
+        }
+        double total = 0;
+        for (Workout workout : workouts) {
+            total += calculator.volume(workout.getSets());
+        }
+        return BigDecimal.valueOf(total)
+                .divide(BigDecimal.valueOf(workouts.size()), 2, RoundingMode.HALF_UP)
+                .doubleValue();
     }
 
     /** Löscht ein Workout, falls vorhanden. */
