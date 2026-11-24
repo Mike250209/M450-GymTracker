@@ -41,6 +41,23 @@
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
+
+        <!-- Integrationstests (LB2): echte PostgreSQL via Testcontainers -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-testcontainers</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>postgresql</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>
@@ -68,7 +85,9 @@
                         <param>ch.m450.gymtracker.service.TrainingCalculator</param>
                     </targetClasses>
                     <targetTests>
-                        <param>ch.m450.gymtracker.*</param>
+                        <!-- nur die Unit-Tests aus LB1; Integrationstests (…​.integration)
+                             brauchen Docker und gehören nicht in die Mutationsanalyse -->
+                        <param>ch.m450.gymtracker.service.*</param>
                     </targetTests>
                     <mutators>
                         <mutator>STRONGER</mutator>
