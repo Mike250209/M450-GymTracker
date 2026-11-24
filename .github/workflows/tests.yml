@@ -7,10 +7,26 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+    # PostgreSQL als Service-Container; die Integrationstests verbinden sich direkt
+    # dagegen (zuverlässiger als Testcontainers auf dem Runner).
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_DB: gymtracker
+          POSTGRES_USER: gymtracker
+          POSTGRES_PASSWORD: gymtracker
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U gymtracker"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
     env:
-      # Der Docker-Daemon der GitHub-Runner verlangt API >= 1.40; ohne diese
-      # Vorgabe meldet sich der Testcontainers-Client mit der veralteten 1.32.
-      DOCKER_API_VERSION: "1.43"
+      SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/gymtracker
+      SPRING_DATASOURCE_USERNAME: gymtracker
+      SPRING_DATASOURCE_PASSWORD: gymtracker
     steps:
       - uses: actions/checkout@v4
 

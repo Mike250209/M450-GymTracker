@@ -27,18 +27,30 @@ import org.testcontainers.containers.PostgreSQLContainer;
 @SpringBootTest
 public abstract class IntegrationTestBase {
 
+    /**
+     * Lokal (ohne vorgegebene Datenbank) wird PostgreSQL über Testcontainers gestartet.
+     * In der CI steht über {@code SPRING_DATASOURCE_URL} bereits ein PostgreSQL-Service-
+     * Container bereit; dann wird dieser genutzt und kein eigener Container gestartet.
+     */
+    static final boolean USE_TESTCONTAINERS = System.getenv("SPRING_DATASOURCE_URL") == null;
+
     static final PostgreSQLContainer<?> POSTGRES =
-            new PostgreSQLContainer<>("postgres:16-alpine");
+            USE_TESTCONTAINERS ? new PostgreSQLContainer<>("postgres:16-alpine") : null;
 
     static {
-        POSTGRES.start();
+        if (USE_TESTCONTAINERS) {
+            POSTGRES.start();
+        }
     }
 
     @DynamicPropertySource
     static void datasourceProperties(DynamicPropertyRegistry registry) {
-        registry.add("spring.datasource.url", POSTGRES::getJdbcUrl);
-        registry.add("spring.datasource.username", POSTGRES::getUsername);
-        registry.add("spring.datasource.password", POSTGRES::getPassword);
+        if (USE_TESTCONTAINERS) {
+            registry.add("spring.datasource.url", POSTGRES::getJdbcUrl);
+            registry.add("spring.datasource.username", POSTGRES::getUsername);
+            registry.add("spring.datasource.password", POSTGRES::getPassword);
+        }
+        // sonst: Spring liest spring.datasource.* aus den Umgebungsvariablen (CI-Service)
     }
 
     @Autowired
