@@ -7,6 +7,10 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+    env:
+      # Der Docker-Daemon der GitHub-Runner verlangt API >= 1.40; ohne diese
+      # Vorgabe meldet sich der Testcontainers-Client mit der veralteten 1.32.
+      DOCKER_API_VERSION: "1.43"
     steps:
       - uses: actions/checkout@v4
 
@@ -16,7 +20,7 @@ jobs:
           java-version: 21
           cache: maven
 
-      - name: Unit-Tests
+      - name: Tests (Unit + Integration)
         run: mvn -B test
 
       - name: Mutation-Testing (PIT)
