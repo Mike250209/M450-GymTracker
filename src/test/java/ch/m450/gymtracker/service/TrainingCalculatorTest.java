@@ -1,15 +1,15 @@
 package ch.m450.gymtracker.service;
 
-import ch.m450.gymtracker.model.WorkoutSet;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
-
 import java.util.Collections;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
+
+import ch.m450.gymtracker.model.WorkoutSet;
 
 @DisplayName("TrainingCalculator (Logik)")
 class TrainingCalculatorTest {
